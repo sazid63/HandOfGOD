@@ -78,7 +78,15 @@ build/icon.ico        the face of the operation
 
 ## 🌐 The website
 
+**Live:** [handofgod.vercel.app](https://handofgod.vercel.app/)
+
 The download page lives in [`site/`](site/) — plain HTML/CSS/Canvas, no build step, no dependencies.
+The logo (`site/logo.svg`), the social preview card (`site/og.png`) and the inlined pixel font
+(`site/fonts.css`) are all generated from the game's own pixel grid:
+
+```bash
+python tools/make_brand.py   # rebuild logo, og.png and fonts.css
+```
 
 ```bash
 cd site && python -m http.server 8080   # http://localhost:8080
