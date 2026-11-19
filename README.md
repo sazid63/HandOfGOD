@@ -93,14 +93,9 @@ cd site && python -m http.server 8080   # http://localhost:8080
 ```
 
 **Deploying to Vercel:** import this repo, pick the **Other** framework preset and set the
-**Root Directory** to `site` (no build command, no output directory needed). The root
-[`vercel.json`](vercel.json) already points Vercel at `site/` if you deploy from the repo root instead.
-
-> **Note on the current live deployment:** it was created with the Vercel API before the
-> GitHub app was installed for this repo, so only `index.html`, `robots.txt` and `sitemap.xml`
-> are served by Vercel; the CSS, font, logo and script are pulled from jsDelivr
-> (`cdn.jsdelivr.net/gh/sazid63/HandOfGOD@main/site/…`). Install the Vercel GitHub app for
-> this repository and redeploy from `site/` to make everything first-party and automatic.
+**Root Directory** to `site`. No build command and no output directory — the folder is served
+as-is, and every push to `main` produces a production deployment. Do not add a root-level
+`vercel.json`: a `framework` value there fails Vercel's schema validation for static projects.
 
 The page links its download button straight at the latest GitHub Release, so shipping a new
 installer is all it takes to update the button.
