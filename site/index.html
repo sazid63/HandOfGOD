@@ -3,43 +3,294 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Hand of GOD — a pixelated desktop game</title>
-  <meta name="description" content="Hand of GOD: a pixelated desktop experience for Windows. Something ancient has been loading for a very long time." />
+
+  <title>Hand of GOD — Free Pixel Art Game for Windows (Download)</title>
+  <meta name="description" content="Download Hand of GOD free for Windows 10 and 11. A short, funny pixel-art desktop game with a real installer, hand-made art, chiptune audio and zero ads." />
+  <meta name="keywords" content="Hand of GOD, free pixel game, free Windows game download, pixel art game, funny desktop game, prank game, indie game Windows, offline game, short comedy game" />
+  <meta name="author" content="Sajid Hossain" />
+  <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1" />
   <meta name="theme-color" content="#08040a" />
-  <link rel="icon" type="image/png" href="icon.png" />
-  <link rel="apple-touch-icon" href="icon.png" />
+  <link rel="canonical" href="https://handofgod.vercel.app/" />
+
+  <meta property="og:type" content="website" />
+  <meta property="og:site_name" content="Hand of GOD" />
+  <meta property="og:title" content="Hand of GOD — Free Pixel Art Game for Windows" />
+  <meta property="og:description" content="A short, funny pixel-art desktop game for Windows 10 and 11. Free download, real installer, zero ads." />
+  <meta property="og:url" content="https://handofgod.vercel.app/" />
+  <meta property="og:image" content="https://raw.githubusercontent.com/sazid63/HandOfGOD/main/site/og.png" />
+  <meta property="og:image:width" content="1200" />
+  <meta property="og:image:height" content="630" />
+  <meta property="og:image:alt" content="Hand of GOD logo: a pixel-art hand under a golden halo" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="Hand of GOD — Free Pixel Art Game for Windows" />
+  <meta name="twitter:description" content="A short, funny pixel-art desktop game for Windows. Free download, real installer, zero ads." />
+  <meta name="twitter:image" content="https://raw.githubusercontent.com/sazid63/HandOfGOD/main/site/og.png" />
+
+  <link rel="icon" type="image/svg+xml" href="logo.svg" />
+  <link rel="mask-icon" href="logo.svg" color="#ffd257" />
+  <link rel="stylesheet" href="fonts.css" />
   <link rel="stylesheet" href="styles.css" />
+
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@graph": [
+      {
+        "@type": ["VideoGame", "SoftwareApplication"],
+        "@id": "https://handofgod.vercel.app/#game",
+        "name": "Hand of GOD",
+        "alternateName": "Hand of GOD: a pixelated desktop experience",
+        "description": "Hand of GOD is a short, funny pixel-art desktop game for Windows 10 and 11. Something ancient has been loading for a very long time, and it would like a word.",
+        "url": "https://handofgod.vercel.app/",
+        "image": "https://raw.githubusercontent.com/sazid63/HandOfGOD/main/site/og.png",
+        "screenshot": "https://raw.githubusercontent.com/sazid63/HandOfGOD/main/site/og.png",
+        "applicationCategory": "GameApplication",
+        "applicationSubCategory": "Indie game",
+        "operatingSystem": "Windows 10, Windows 11",
+        "processorRequirements": "64-bit processor",
+        "memoryRequirements": "4 GB RAM",
+        "gamePlatform": "PC",
+        "genre": ["Comedy", "Pixel art", "Prank"],
+        "playMode": "SinglePlayer",
+        "downloadUrl": "https://github.com/sazid63/HandOfGOD/releases/latest/download/HandOfGOD-Setup-1.0.0.exe",
+        "installUrl": "https://github.com/sazid63/HandOfGOD/releases/latest",
+        "softwareVersion": "1.0.0",
+        "fileSize": "121MB",
+        "datePublished": "2026-11-19",
+        "inLanguage": "en",
+        "isAccessibleForFree": true,
+        "offers": { "@type": "Offer", "price": "0", "priceCurrency": "USD", "availability": "https://schema.org/InStock" },
+        "author": { "@type": "Person", "name": "Sajid Hossain", "url": "https://github.com/sazid63" },
+        "publisher": { "@type": "Organization", "name": "Hand of GOD", "url": "https://handofgod.vercel.app/" },
+        "isFamilyFriendly": true
+      },
+      {
+        "@type": "WebSite",
+        "@id": "https://handofgod.vercel.app/#website",
+        "url": "https://handofgod.vercel.app/",
+        "name": "Hand of GOD",
+        "inLanguage": "en",
+        "publisher": { "@id": "https://handofgod.vercel.app/#game" }
+      },
+      {
+        "@type": "FAQPage",
+        "@id": "https://handofgod.vercel.app/#faq",
+        "mainEntity": [
+          {
+            "@type": "Question",
+            "name": "Is Hand of GOD really free?",
+            "acceptedAnswer": { "@type": "Answer", "text": "Yes. Hand of GOD is free to download and play. There are no ads, no accounts, no microtransactions and nothing to buy afterwards." }
+          },
+          {
+            "@type": "Question",
+            "name": "Does Hand of GOD work on Windows 10 and Windows 11?",
+            "acceptedAnswer": { "@type": "Answer", "text": "It is built for 64-bit Windows 10 and Windows 11. The installer lets you pick the folder it installs into, then creates a desktop and Start Menu shortcut." }
+          },
+          {
+            "@type": "Question",
+            "name": "How long is the game?",
+            "acceptedAnswer": { "@type": "Answer", "text": "About forty-five seconds, including a deliberately long load screen. It has a beginning, a middle and a very definite end." }
+          },
+          {
+            "@type": "Question",
+            "name": "Does Hand of GOD need an internet connection?",
+            "acceptedAnswer": { "@type": "Answer", "text": "No. Once the installer is downloaded you can play entirely offline. The game collects no data and sends nothing anywhere." }
+          },
+          {
+            "@type": "Question",
+            "name": "Why does Windows SmartScreen warn me about the installer?",
+            "acceptedAnswer": { "@type": "Answer", "text": "The installer is not code-signed, so SmartScreen shows a warning for small indie releases. Choose More info, then Run anyway to continue." }
+          }
+        ]
+      }
+    ]
+  }
+  </script>
 </head>
 <body>
+  <a class="skip" href="#download">Skip to download</a>
   <canvas id="bg" aria-hidden="true"></canvas>
 
+  <header class="site-header">
+    <div class="bar">
+      <a class="brand" href="./" aria-label="Hand of GOD home">
+        <img src="logo.svg" alt="Hand of GOD logo" width="36" height="36" />
+        <span>HAND OF GOD</span>
+      </a>
+      <nav aria-label="Main">
+        <a href="#features">Features</a>
+        <a href="#install">Install</a>
+        <a href="#faq">FAQ</a>
+        <a class="nav-cta" href="#download">Download</a>
+      </nav>
+    </div>
+  </header>
+
   <main>
-    <p class="kicker">Something divine is loading</p>
+    <section class="hero" aria-labelledby="hero-title">
+      <p class="kicker">Something divine is loading</p>
+      <h1 id="hero-title" class="title">
+        <span class="l1">HAND</span>
+        <span class="l2">OF</span>
+        <span class="l3">GOD</span>
+      </h1>
+      <p class="lede">
+        A free pixel-art desktop game for Windows 10 and 11.
+        Forty-five seconds of your life, offered to a higher power.
+      </p>
 
-    <h1 class="title">
-      <span class="l1">HAND</span>
-      <span class="l2">OF</span>
-      <em class="l3">GOD</em>
-    </h1>
+      <div class="cta" id="download">
+        <a class="download"
+           href="https://github.com/sazid63/HandOfGOD/releases/latest/download/HandOfGOD-Setup-1.0.0.exe"
+           aria-label="Download Hand of GOD setup for Windows, version 1.0.0, 121 megabytes">
+          <span class="arrow" aria-hidden="true">▼</span>
+          <span>download for windows</span>
+        </a>
+        <p class="meta">v1.0.0 · Windows 10 / 11 · 64-bit · 121 MB · free, no account needed</p>
+      </div>
+    </section>
 
-    <p class="tagline">
-      A pixelated desktop game.<br />
-      Forty-five seconds of your life, offered to a higher power.
-    </p>
+    <section id="about" class="panel" aria-labelledby="about-title">
+      <h2 id="about-title">What is Hand of GOD?</h2>
+      <p>
+        Hand of GOD is a short, hand-drawn pixel game about a celestial hand with
+        a lot of build-up and very little patience. It opens with a proper start
+        menu, spends exactly as long loading as it says it will, and then delivers
+        a cinematic, particle-soaked moment that has been politely described as
+        “a comedy”.
+      </p>
+      <p>
+        Everything in it — the pixel art, the chiptune music, the installer icon —
+        is generated from code, so the whole game is a couple of hundred kilobytes
+        of stubbornness wrapped in a normal Windows installer. It runs offline, it
+        collects nothing, and it fits in a single sitting.
+      </p>
+    </section>
 
-    <a class="download"
-       href="https://github.com/sazid63/HandOfGOD/releases/latest/download/HandOfGOD-Setup-1.0.0.exe">
-      <span class="arrow" aria-hidden="true">▼</span>
-      <span>download for windows</span>
-    </a>
+    <section id="features" class="panel" aria-labelledby="features-title">
+      <h2 id="features-title">Features</h2>
+      <ul class="cards">
+        <li>
+          <h3>One hand, drawn by hand</h3>
+          <p>Not a stock photo, not an asset pack — a pixel hand built from rounded
+          shapes and shading maths, one pixel at a time.</p>
+        </li>
+        <li>
+          <h3>A load screen you can trust</h3>
+          <p>It says twenty seconds. It means twenty seconds. No fake progress bars.</p>
+        </li>
+        <li>
+          <h3>Cinematic build-up</h3>
+          <p>Music, light, particles and an amount of anticipation that many longer
+          games would consider excessive.</p>
+        </li>
+        <li>
+          <h3>A real Windows installer</h3>
+          <p>Pick your own install folder, get a desktop shortcut, and a normal
+          uninstaller that actually removes things.</p>
+        </li>
+        <li>
+          <h3>Volume-only settings</h3>
+          <p>Genuinely just volume control. No upselling you a brightness slider.</p>
+        </li>
+        <li>
+          <h3>Free and offline</h3>
+          <p>No ads, no accounts, no telemetry, no internet connection required
+          after download.</p>
+        </li>
+      </ul>
+    </section>
 
-    <p class="meta">v1.0.0 · Windows 10 / 11 · 64-bit · 121 MB</p>
+    <section id="install" class="panel" aria-labelledby="install-title">
+      <h2 id="install-title">How to install Hand of GOD on Windows</h2>
+      <ol class="steps">
+        <li>
+          <h3>Download the installer</h3>
+          <p>Grab <code>HandOfGOD-Setup-1.0.0.exe</code> from the download button or
+          from the <a href="https://github.com/sazid63/HandOfGOD/releases/latest">GitHub releases page</a>.</p>
+        </li>
+        <li>
+          <h3>Run it and choose a folder</h3>
+          <p>The setup asks where you want the game installed. Any folder will do.</p>
+        </li>
+        <li>
+          <h3>If SmartScreen complains</h3>
+          <p>Small unsigned indie installers trigger a warning. Choose
+          <em>More info → Run anyway</em>.</p>
+        </li>
+        <li>
+          <h3>Launch from the Start Menu</h3>
+          <p>A desktop shortcut and a Start Menu entry called <em>Hand of GOD</em>
+          appear when it finishes.</p>
+        </li>
+      </ol>
+
+      <h3 class="sub">System requirements</h3>
+      <table class="reqs">
+        <caption class="visually-hidden">Hand of GOD system requirements</caption>
+        <tbody>
+          <tr><th scope="row">Operating system</th><td>Windows 10 or Windows 11 (64-bit)</td></tr>
+          <tr><th scope="row">Graphics</th><td>Whatever you already have</td></tr>
+          <tr><th scope="row">Input</th><td>A mouse, or arrow keys plus Enter</td></tr>
+          <tr><th scope="row">Disk space</th><td>About 250 MB including the Electron runtime</td></tr>
+          <tr><th scope="row">Internet</th><td>Only needed for the download itself</td></tr>
+        </tbody>
+      </table>
+    </section>
+
+    <section id="faq" class="panel" aria-labelledby="faq-title">
+      <h2 id="faq-title">Frequently asked questions</h2>
+
+      <details>
+        <summary>Is Hand of GOD really free?</summary>
+        <p>Yes. It is free to download and play. No ads, no accounts, no
+        microtransactions, and nothing to buy afterwards.</p>
+      </details>
+      <details>
+        <summary>Does it work on Windows 10 and Windows 11?</summary>
+        <p>It is built for 64-bit Windows 10 and Windows 11. The installer lets you
+        pick the folder it installs into and creates desktop and Start Menu shortcuts.</p>
+      </details>
+      <details>
+        <summary>How long is the game?</summary>
+        <p>About forty-five seconds, including a deliberately long load screen. It has
+        a beginning, a middle and a very definite end.</p>
+      </details>
+      <details>
+        <summary>Does it need an internet connection?</summary>
+        <p>No. Once the installer is downloaded you can play entirely offline. The game
+        collects no data and sends nothing anywhere.</p>
+      </details>
+      <details>
+        <summary>Why does SmartScreen warn me about the installer?</summary>
+        <p>The installer is not code-signed, so Windows shows a warning for small indie
+        releases. Choose <em>More info</em>, then <em>Run anyway</em>.</p>
+      </details>
+    </section>
+
+    <section class="panel closer" aria-labelledby="closer-title">
+      <h2 id="closer-title">Ready to be chosen?</h2>
+      <p>One download. One installer. One hand.</p>
+      <a class="download"
+         href="https://github.com/sazid63/HandOfGOD/releases/latest/download/HandOfGOD-Setup-1.0.0.exe">
+        <span class="arrow" aria-hidden="true">▼</span>
+        <span>download for windows</span>
+      </a>
+    </section>
   </main>
 
   <footer>
-    Made by <strong>Sajid Hossain</strong>
+    <p>Hand of GOD — made by <strong>Sajid Hossain</strong>.</p>
+    <p class="foot-links">
+      <a href="https://github.com/sazid63/HandOfGOD">Source on GitHub</a>
+      <span aria-hidden="true">·</span>
+      <a href="https://github.com/sazid63/HandOfGOD/releases">All releases</a>
+      <span aria-hidden="true">·</span>
+      <a href="https://github.com/sazid63/HandOfGOD/blob/main/LICENSE">MIT licence</a>
+    </p>
+    <p class="copyright">© <span id="year">2026</span> Sajid Hossain · Windows is a trademark of Microsoft Corporation. Not affiliated with anyone divine.</p>
   </footer>
 
-  <script src="site.js"></script>
+  <script src="site.js" defer></script>
 </body>
 </html>

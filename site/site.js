@@ -263,20 +263,20 @@
     ctx.globalCompositeOperation = 'source-over';
 
     /* the hand, looming */
-    const scale = Math.max(2, Math.round(Math.min(vh * 0.64, vw * 0.62) / BOUNDS.h));
-    const bob = reduced ? 0 : Math.sin(t / 2600) * vh * 0.012;
+    const scale = Math.max(2, Math.round(Math.min(vh * 0.46, vw * 0.5) / BOUNDS.h));
+    const bob = reduced ? 0 : Math.sin(t / 2600) * vh * 0.01;
     const hx = cx - BOUNDS.cx * scale;
-    const hy = vh * 0.44 - BOUNDS.cy * scale + bob;
+    const hy = vh * 0.3 - BOUNDS.cy * scale + bob;
     const pulse = reduced ? 0.5 : 0.5 + 0.5 * Math.sin(t / 2400);
 
     ctx.save();
-    ctx.globalAlpha = 0.78;
+    ctx.globalAlpha = 0.5;
     ctx.imageSmoothingEnabled = false;
     ctx.shadowColor = 'rgba(255,120,50,0.55)';
     ctx.shadowBlur = 46 + pulse * 34;
     ctx.drawImage(sprite, Math.round(hx), Math.round(hy), SPR_W * scale, SPR_H * scale);
     ctx.shadowBlur = 0;
-    ctx.globalAlpha = 0.24 + pulse * 0.2;
+    ctx.globalAlpha = 0.16 + pulse * 0.14;
     ctx.drawImage(sprite, Math.round(hx), Math.round(hy), SPR_W * scale, SPR_H * scale);
     ctx.restore();
 
