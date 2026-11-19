@@ -1,0 +1,57 @@
+{
+  "name": "hand-of-god",
+  "productName": "HandOfGOD",
+  "version": "1.0.0",
+  "description": "A pixelated hand with divine powers. Allegedly.",
+  "author": "sazid63",
+  "license": "MIT",
+  "main": "electron/main.js",
+  "scripts": {
+    "start": "electron .",
+    "dist": "electron-builder --win nsis",
+    "icons": "python tools/make_icons.py"
+  },
+  "devDependencies": {
+    "electron": "^45.3.4",
+    "electron-builder": "^26.18.0"
+  },
+  "build": {
+    "appId": "com.sazid63.handofgod",
+    "productName": "Hand of GOD",
+    "copyright": "Copyright © 2026 sazid63",
+    "directories": {
+      "output": "dist",
+      "buildResources": "build"
+    },
+    "files": [
+      "electron/**/*",
+      "game.js",
+      "index.html",
+      "styles.css",
+      "assets/**/*"
+    ],
+    "win": {
+      "target": [
+        {
+          "target": "nsis",
+          "arch": [
+            "x64"
+          ]
+        }
+      ],
+      "icon": "build/icon.ico"
+    },
+    "nsis": {
+      "oneClick": false,
+      "perMachine": false,
+      "allowToChangeInstallationDirectory": true,
+      "createDesktopShortcut": true,
+      "createStartMenuShortcut": true,
+      "shortcutName": "Hand of GOD",
+      "uninstallDisplayName": "Hand of GOD",
+      "installerIcon": "build/icon.ico",
+      "uninstallerIcon": "build/icon.ico",
+      "artifactName": "HandOfGOD-Setup-${version}.exe"
+    }
+  }
+}
