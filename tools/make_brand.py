@@ -317,6 +317,67 @@ def write_og():
 # fonts.css (pixel font inlined, so the page needs no extra request)
 # --------------------------------------------------------------------------
 
+def _draw_logo(size):
+    """Raster version of logo.svg, for favicons and touch icons."""
+    from PIL import Image, ImageDraw
+
+    s = 4  # supersample, then shrink for clean edges
+    w = size * s
+    img = Image.new("RGBA", (w, w), (0, 0, 0, 0))
+    d = ImageDraw.Draw(img, "RGBA")
+
+    radius = int(w * 0.22)
+    d.rounded_rectangle([0, 0, w - 1, w - 1], radius=radius, fill=(26, 7, 15, 255))
+    d.rounded_rectangle([0, int(w * 0.45), w - 1, w - 1], radius=radius, fill=(10, 4, 9, 255))
+
+    for i in range(6):
+        a = -math.pi / 2 + (i - 2.5) * 0.5
+        length = w
+        cx, cy = w / 2, w * 0.2
+        d.polygon(
+            [
+                (cx, cy),
+                (cx + math.cos(a - 0.08) * length, cy + math.sin(a - 0.08) * length),
+                (cx + math.cos(a + 0.08) * length, cy + math.sin(a + 0.08) * length),
+            ],
+            fill=(255, 140, 70, 16),
+        )
+
+    # halo
+    hx0, hy0, hx1, hy1 = w * 0.22, w * 0.13, w * 0.78, w * 0.24
+    d.ellipse([hx0, hy0, hx1, hy1], outline=(255, 210, 87, 230), width=max(2, int(w * 0.035)))
+
+    # hand, scaled to sit under the halo
+    content_w = bounds["max_x"] - bounds["min_x"] + 1
+    content_h = bounds["max_y"] - bounds["min_y"] + 1
+    cell = (w * 0.66) / content_h
+    ox = (w - content_w * cell) / 2 - bounds["min_x"] * cell
+    oy = w * 0.3 - bounds["min_y"] * cell
+    for y in range(SPR_H):
+        for x in range(SPR_W):
+            v = GRID[y][x]
+            if not v:
+                continue
+            colour = "#3b1d08" if v in (3, 5) else "#ffd257"
+            d.rectangle(
+                [ox + x * cell, oy + y * cell, ox + (x + 1) * cell + 0.5, oy + (y + 1) * cell + 0.5],
+                fill=colour,
+            )
+
+    return img.resize((size, size), Image.LANCZOS)
+
+
+def write_icons():
+    big = _draw_logo(180)
+    big.save(os.path.join(SITE, "apple-touch-icon.png"), optimize=True)
+    _draw_logo(96).save(os.path.join(SITE, "favicon-96.png"), optimize=True)
+    _draw_logo(32).save(
+        os.path.join(SITE, "favicon.ico"),
+        sizes=[(16, 16), (32, 32), (48, 48)],
+    )
+    print("site/favicon.ico, favicon-96.png and apple-touch-icon.png written")
+
+
 def write_fonts():
     with open(os.path.join(SITE, "PressStart2P.woff2"), "rb") as f:
         b64 = base64.b64encode(f.read()).decode("ascii")
@@ -333,4 +394,5 @@ def write_fonts():
 if __name__ == "__main__":
     write_logo()
     write_og()
+    write_icons()
     write_fonts()
