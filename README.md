@@ -76,6 +76,23 @@ build/icon.ico        the face of the operation
 
 ---
 
+## 🌐 The website
+
+The download page lives in [`site/`](site/) — plain HTML/CSS/Canvas, no build step, no dependencies.
+
+```bash
+cd site && python -m http.server 8080   # http://localhost:8080
+```
+
+**Deploying to Vercel:** import this repo, pick the **Other** framework preset and set the
+**Root Directory** to `site` (no build command, no output directory needed). The root
+[`vercel.json`](vercel.json) already points Vercel at `site/` if you deploy from the repo root instead.
+
+The page links its download button straight at the latest GitHub Release, so shipping a new
+installer is all it takes to update the button.
+
+---
+
 ## ❓ Frequently Asked Questions
 
 <details>
@@ -114,7 +131,7 @@ The game collects absolutely nothing. Your volume preference lives in a few byte
 
 It's a harmless prank game. Nothing is installed outside the folder you pick, nothing is sent anywhere, and the uninstaller is a perfectly normal uninstaller.
 
-MIT licensed. Made with pixels, sass, and an unhealthy amount of `fillRect`.
+MIT licensed. Made by **Sajid Hossain**, with pixels, sass, and an unhealthy amount of `fillRect`.
 
 <div align="center">
 
