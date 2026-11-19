@@ -298,9 +298,9 @@
   /* The Hand (built out of pixels, like the gods intended)              */
   /* ------------------------------------------------------------------ */
 
-  const SPR_W = 48;
-  const SPR_H = 54;
-  const FINGER_ROOT = 19;
+  const SPR_W = 56;
+  const SPR_H = 68;
+  const FINGER_ROOT = 16; /* rows above this hold nothing but the raised finger */
 
   function buildHandGrid(extended) {
     const grid = new Array(SPR_W * SPR_H).fill(0);
@@ -333,23 +333,73 @@
       }
     };
 
-    /* palm / back of hand */
-    round(10, 26, 34, 20, 5, 1);
-    /* thumb, folded across */
-    round(4, 31, 10, 12, 4, 1);
-    round(7, 37, 10, 7, 3, 1);
-    /* folded fingers */
-    round(11, 22, 8, 12, 3, 1);
-    round(19, 19, 9, 14, 3, 1);
-    round(36, 21, 8, 12, 3, 1);
-    /* the star of the show */
-    if (extended) {
-      round(27, 4, 9, 32, 4, 1);
-      /* nail */
-      round(29, 6, 5, 6, 1, 4);
-    } else {
-      round(27, 21, 9, 12, 3, 1);
+    /* thick rounded stroke between two points (used for the thumb) */
+    const capsule = (x0, y0, x1, y1, r, v) => {
+      const vx = x1 - x0;
+      const vy = y1 - y0;
+      const len2 = vx * vx + vy * vy || 1;
+      for (let y = Math.floor(Math.min(y0, y1) - r); y <= Math.ceil(Math.max(y0, y1) + r); y++) {
+        for (let x = Math.floor(Math.min(x0, x1) - r); x <= Math.ceil(Math.max(x0, x1) + r); x++) {
+          const cxp = x + 0.5;
+          const cyp = y + 0.5;
+          let t = ((cxp - x0) * vx + (cyp - y0) * vy) / len2;
+          t = t < 0 ? 0 : t > 1 ? 1 : t;
+          const dx = cxp - (x0 + vx * t);
+          const dy = cyp - (y0 + vy * t);
+          if (dx * dx + dy * dy <= r * r) setCell(x, y, v);
+        }
+      }
+    };
+
+    /* ---------------------------------------------------------------- */
+    /* LEFT hand, palm toward the player: thumb on the viewer's left,      */
+    /* the raised finger second in from the thumb.                        */
+    /* ---------------------------------------------------------------- */
+
+    /* palm and wrist as one tapering profile: widest at the knuckles,      */
+    /* pinching in at the wrist the way a real hand does                   */
+    const profile = [
+      [23, 11, 44],
+      [26, 9, 45],
+      [32, 8, 46],
+      [39, 9, 45],
+      [44, 10, 44],
+      [49, 12, 42],
+      [54, 14, 40],
+      [59, 15, 39],
+      [64, 17, 37],
+      [67, 20, 34]
+    ];
+    for (let i = 0; i < profile.length - 1; i++) {
+      const y0 = profile[i][0];
+      const l0 = profile[i][1];
+      const r0 = profile[i][2];
+      const y1 = profile[i + 1][0];
+      const l1 = profile[i + 1][1];
+      const r1 = profile[i + 1][2];
+      for (let y = y0; y < y1; y++) {
+        const t = (y - y0) / (y1 - y0);
+        const left = Math.round(l0 + (l1 - l0) * t);
+        const right = Math.round(r0 + (r1 - r0) * t);
+        for (let x = left; x <= right; x++) setCell(x, y, 1);
+      }
     }
+
+    /* folded fingers: proximal segments rising off the knuckles */
+    round(10, 20, 10, 16, 5, 1); /* index */
+    round(31, 21, 9, 14, 5, 1); /* ring  */
+    round(40, 25, 8, 14, 4, 1); /* pinky */
+
+    /* the finger doing all the talking */
+    if (extended) {
+      round(20, 2, 11, 12, 5, 1); /* rounded fingertip */
+      round(21, 8, 9, 24, 4, 1); /* shaft, tapering a little  */
+    } else {
+      round(20, 18, 11, 18, 5, 1);
+    }
+
+    /* thumb, folded across the fingers, base bulging off the palm's side */
+    capsule(8, 48, 25, 41, 5.5, 1);
 
     /* shading + outline (from the silhouette, so it stays crisp) */
     const solid = grid.slice();
@@ -376,16 +426,79 @@
       }
     }
 
-    /* knuckle creases */
+    /* ---------------------------------------------------------------- */
+    /* Detail pass: seams, joint folds, pads, palm lines                   */
+    /* ---------------------------------------------------------------- */
+
+    const paint = (x, y, v, from) => {
+      if (x < 0 || y < 0 || x >= SPR_W || y >= SPR_H) return;
+      const i = y * SPR_W + x;
+      if (from && from.indexOf(grid[i]) === -1) return;
+      grid[i] = v;
+    };
+
+    /* seams between the four fingers */
+    for (let y = 21; y <= 30; y++) paint(19, y, 3, [1, 2]);
+    for (let y = 20; y <= 30; y++) paint(30, y, 3, [1, 2]);
+    for (let y = 26; y <= 34; y++) paint(39, y, 3, [1, 2]);
+
+    /* each folded finger gets a fold line across its knuckle */
+    const folded = (x0, x1, foldY) => {
+      for (let x = x0 + 1; x <= x1 - 1; x++) paint(x, foldY, 3, [1, 2]);
+    };
+    folded(11, 18, 27);
+    folded(32, 38, 28);
+    folded(41, 46, 32);
+    if (!extended) folded(21, 29, 25);
+
+    /* raised finger: knuckle crease, a joint crease, a lit tip */
     if (extended) {
-      for (let x = 28; x <= 34; x++) grid[26 * SPR_W + x] = 3;
+      for (let x = 21; x <= 29; x++) paint(x, 23, 3, [1, 2]);
+      for (let x = 21; x <= 29; x++) paint(x, 15, 3, [1, 2]);
+      for (let y = 4; y <= 10; y++) {
+        for (let x = 22; x <= 29; x++) {
+          const dx = x + 0.5 - 25.5;
+          const dy = y + 0.5 - 7;
+          if ((dx * dx) / 7 + (dy * dy) / 10 > 1) continue;
+          paint(x, y, 2, [1]);
+        }
+      }
     }
+
+    /* thumb: a lit ridge along its top, a shadow where it meets the palm */
+    for (let i = 0; i <= 17; i++) paint(8 + i, 43 - Math.round(i * 0.35), 3, [1, 2]);
+    for (let i = 1; i <= 15; i++) paint(9 + i, 52 - Math.round(i * 0.28), 3, [1, 2]);
+
+    /* one palm line below the thumb, then the wrist */
+    for (let x = 17; x <= 37; x++) {
+      const y = 57 + Math.round(1.5 * Math.sin((x - 17) / 5.6));
+      paint(x, y, 3, [1, 2]);
+    }
+    for (let x = 19; x <= 35; x++) paint(x, 63, 3, [1, 2]);
 
     return grid;
   }
 
   const GRID_FIST = buildHandGrid(false);
   const GRID_UP = buildHandGrid(true);
+
+  /* where the hand actually lives inside the sprite, so it can be centred */
+  function gridBounds(grid) {
+    let minX = SPR_W, maxX = -1, minY = SPR_H, maxY = -1;
+    for (let y = 0; y < SPR_H; y++) {
+      for (let x = 0; x < SPR_W; x++) {
+        if (!grid[y * SPR_W + x]) continue;
+        if (x < minX) minX = x;
+        if (x > maxX) maxX = x;
+        if (y < minY) minY = y;
+        if (y > maxY) maxY = y;
+      }
+    }
+    return { minX, maxX, minY, maxY, cx: (minX + maxX + 1) / 2 };
+  }
+
+  const HAND_BOUNDS = gridBounds(GRID_UP);
+  const HAND_HEIGHT = HAND_BOUNDS.maxY - HAND_BOUNDS.minY + 1;
 
   const PALETTES = {
     skin: { 1: '#f0bd8b', 2: '#ffdcae', 3: '#c9884f', 4: '#ffeacb', 5: '#2a1420' },
@@ -430,7 +543,7 @@
     if (rot) ctx.rotate(rot);
     ctx.imageSmoothingEnabled = false;
 
-    const dx = (-SPR_W * scale) / 2;
+    const dx = -HAND_BOUNDS.cx * scale;
     const dy = -SPR_H * scale;
 
     if (opt.glow) {
@@ -1021,8 +1134,12 @@
     /* the hand itself */
     const riseRaw = clamp((stateTime - T_RISE_START) / (T_RISE_END - T_RISE_START), 0, 1);
     const rise = easeOut(riseRaw);
-    const handY = H + 190 - (190 + 44) * rise;
-    const handScale = 2.55 + 0.42 * build;
+    const handScale = 2.65 + 0.5 * build;
+    const handH = HAND_HEIGHT * handScale;
+    const restingY = H / 2 + handH / 2 + 4; /* wrist just under the screen's middle */
+    const startY = H + handH; /* fully off-screen when the rise begins */
+    const handY = startY + (restingY - startY) * rise;
+    const handCenterY = handY - handH / 2;
     const rotation = lerp(-0.55, 0, rise) + Math.sin(globalTime * 1.6) * 0.03 * (1 - build);
 
     const shx = Math.sin(globalTime * 61) * shake;
@@ -1050,7 +1167,7 @@
         ctx.lineWidth = 2;
         const hr = 120 + 30 * Math.sin(globalTime * 2);
         ctx.beginPath();
-        ctx.ellipse(cx + shx, 268 + shy, hr, hr * 0.35, 0, 0, Math.PI * 2);
+        ctx.ellipse(cx + shx, handY + shy - 26, hr, hr * 0.35, 0, 0, Math.PI * 2);
         ctx.stroke();
         ctx.restore();
       }
@@ -1064,7 +1181,7 @@
       ctx.strokeStyle = '#ff5f5f';
       ctx.lineWidth = 5 * (1 - k) + 1;
       ctx.beginPath();
-      ctx.arc(cx, 190, 40 + 520 * easeOut(k), 0, Math.PI * 2);
+      ctx.arc(cx, handCenterY, 40 + 520 * easeOut(k), 0, Math.PI * 2);
       ctx.stroke();
       ctx.restore();
 
@@ -1073,7 +1190,7 @@
         for (let i = 0; i < 10; i++) {
           const a = (i / 10) * Math.PI * 2 + globalTime * 2;
           const r = 120 + Math.sin(globalTime * 6 + i) * 14;
-          px(cx + Math.cos(a) * r, 190 + Math.sin(a) * r * 0.4, 4, 4, i % 2 ? '#ffd257' : '#ff7ac2');
+          px(cx + Math.cos(a) * r, handCenterY + Math.sin(a) * r * 0.4, 4, 4, i % 2 ? '#ffd257' : '#ff7ac2');
         }
       }
     }
