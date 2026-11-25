@@ -1,7 +1,7 @@
 {
   "name": "hand-of-god",
   "productName": "HandOfGOD",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "description": "A pixelated hand with divine powers. Allegedly.",
   "author": "sazid63",
   "license": "MIT",
@@ -51,7 +51,7 @@
       "uninstallDisplayName": "Hand of GOD",
       "installerIcon": "build/icon.ico",
       "uninstallerIcon": "build/icon.ico",
-      "artifactName": "HandOfGOD-Setup-${version}.exe"
+      "artifactName": "HandOfGOD-Setup.exe"
     }
   }
 }

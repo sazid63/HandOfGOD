@@ -36,7 +36,7 @@ Now it is almost done.
 
 ## 📦 Installation
 
-1. Grab `HandOfGOD-Setup-1.0.0.exe` from the [Releases](../../releases) page.
+1. Grab `HandOfGOD-Setup.exe` from the [Releases](../../releases) page.
 2. Run it.
 3. **Choose your install directory.** Any folder. This is your moment.
 4. Click install. Wait approximately six seconds. That's it. That's the whole wait.
@@ -60,7 +60,7 @@ Now it is almost done.
 ```bash
 npm install
 npm start        # run the game
-npm run dist     # build dist/HandOfGOD-Setup-1.0.0.exe (NSIS installer)
+npm run dist     # build dist/HandOfGOD-Setup.exe (NSIS installer)
 ```
 
 Everything is vanilla HTML/CSS/Canvas inside Electron — no framework, no bundler, no surprises.
