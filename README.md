@@ -107,13 +107,13 @@ installer is all it takes to update the button.
 - [`assets/menu.gif`](assets/menu.gif) — the start menu looping: breathing fist, drifting sparkles, orbiting runes, press-in buttons.
 - [`assets/loader.gif`](assets/loader.gif) — the loading screen: accelerating heartbeat, bar fill, the silhouette that stays deliberately unclear.
 
-Both were captured from real gameplay (no mockups). Regenerate them yourself:
+Both were captured from real gameplay (no mockups): frames were grabbed from the running
+`<canvas id="game">` and stitched with `ffmpeg`, using `palettegen`/`paletteuse` for a small file.
 
 ```bash
-cd site && python -m http.server 8088
+python -m http.server 8088                # serve the game root, open http://127.0.0.1:8088
+ffmpeg -framerate 20 -i frames/menu_%04d.png -loop 0 assets/menu.gif
 ```
-
-then record the canvas with the browser console tool.
 
 ---
 
