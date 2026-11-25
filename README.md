@@ -1,166 +1,25 @@
-<div align="center">
-
 # 🖐️ HAND OF GOD
 
-**A pixelated, divinely overconfident desktop experience.**
+**A short, hand-drawn pixel game about a celestial hand with a lot of build-up and very little patience.**
 
-[![Platform](https://img.shields.io/badge/platform-Windows%2010%20%7C%2011-0078D6?style=for-the-badge&logo=windows&logoColor=white)](#-installation)
-[![Engine](https://img.shields.io/badge/engine-Electron%20%2B%20Canvas-47848F?style=for-the-badge&logo=electron&logoColor=white)](package.json)
-[![Vibes](https://img.shields.io/badge/vibes-divine-ff4fc8?style=for-the-badge)](#-frequently-asked-questions)
-[![Spoilers](https://img.shields.io/badge/spoilers-absolutely%20not-ffd257?style=for-the-badge)](#-frequently-asked-questions)
-
-</div>
-
----
-
-## ✨ What is Hand of GOD?
-
-Something ancient has been loading for a very long time.
-
-Now it is almost done.
-
-> *"A video game to play to spend your time. Hurt feelings won't be reimbursed."*
-
----
-
-## 🎮 Features
-
-- 🖐️ **One (1) hand.** Handcrafted, pixel by pixel. Not a stock photo. Not AI-generated. Drawn with math.
-- ⏳ **A load screen that respects your time** by taking exactly as long as it says it will.
-- 🎬 **Cinematic build-up.** There is music. There is light. There are particles. There is *anticipation*.
-- 🔁 **A beginning, a middle, and an end.** Very much an end.
-- 🔊 **Volume control.** Genuinely just volume control. We are not going to upsell you a "brightness" slider.
-- 🖥️ **A real Windows installer.** Pick a folder. Watch files appear inside it. Feel powerful.
-
----
+<center>**Website:** [handofgod.vercel.app](https://handofgod.vercel.app/)<center>
 
 ## 📦 Installation
 
-1. Grab `HandOfGOD-Setup.exe` from the [Releases](../../releases) page.
-2. Run it.
-3. **Choose your install directory.** Any folder. This is your moment.
-4. Click install. Wait approximately six seconds. That's it. That's the whole wait.
-5. Launch **Hand of GOD** from the Start Menu or the desktop shortcut.
+1. Grab `HandOfGOD-Setup.exe` from the [Releases](https://github.com/sazid63/HandOfGOD/releases)  
+2. Run it and choose your install folder
 
-> Windows SmartScreen may get shy about an unsigned indie game. Choose *More info → Run anyway* and trust the hand.
+## 🎮 What is Hand of GOD?
 
-### System requirements
-
-| | |
-|---|---|
-| OS | Windows 10 / 11 (x64) |
-| Graphics | Whatever you already have |
-| Input | A mouse, or keyboard arrows + Enter |
-| Emotional state | Unprepared |
-
----
-
-## 🛠️ Build it yourself
-
-```bash
-npm install
-npm start        # run the game
-npm run dist     # build dist/HandOfGOD-Setup.exe (NSIS installer)
-```
-
-Everything is vanilla HTML/CSS/Canvas inside Electron — no framework, no bundler, no surprises.
-The pixel hand, the chiptune audio and the installer icon are all generated from code, so the repo stays tiny.
-
-```
-game.js               the whole game (state machine, sprites, audio)
-electron/main.js      desktop window + exit
-electron/preload.js   tiny quit bridge
-tools/make_icons.py   draws build/icon.ico
-build/icon.ico        the face of the operation
-```
-
----
-
-## 🌐 The website
-
-**Live:** [handofgod.vercel.app](https://handofgod.vercel.app/)
-
-The download page lives in [`site/`](site/) — plain HTML/CSS/Canvas, no build step, no dependencies.
-The logo (`site/logo.svg`), the social preview card (`site/og.png`) and the inlined pixel font
-(`site/fonts.css`) are all generated from the game's own pixel grid:
-
-```bash
-python tools/make_brand.py   # rebuild logo, og.png and fonts.css
-```
-
-```bash
-cd site && python -m http.server 8080   # http://localhost:8080
-```
-
-**Deploying to Vercel:** import this repo, pick the **Other** framework preset and set the
-**Root Directory** to `site`. No build command and no output directory — the folder is served
-as-is, and every push to `main` produces a production deployment. Do not add a root-level
-`vercel.json`: a `framework` value there fails Vercel's schema validation for static projects.
-
-The page links its download button straight at the latest GitHub Release, so shipping a new
-installer is all it takes to update the button.
-
----
+Hand of GOD is a short, hand-drawn pixel game about a celestial hand with a lot of build-up and very little patience. It opens with a proper start menu, spends exactly as long loading as it says it will, and then delivers a cinematic, particle‑soaked moment.
 
 ## 🎞️ Moving visuals
 
-- [`assets/menu.gif`](assets/menu.gif) — the start menu looping: breathing fist, drifting sparkles, orbiting runes, press-in buttons.
-- [`assets/loader.gif`](assets/loader.gif) — the loading screen: accelerating heartbeat, bar fill, the silhouette that stays deliberately unclear.
+- `assets/menu.gif` – start menu: breathing fist, drifting sparkles, orbiting runes, press‑in buttons  
+- `assets/loader.gif` – loading screen: accelerating heartbeat, bar fill, deliberately unclear hand silhouette  
 
-Both were captured from real gameplay (no mockups): frames were grabbed from the running
-`<canvas id="game">` and stitched with `ffmpeg`, using `palettegen`/`paletteuse` for a small file.
+Both were captured from real gameplay (no mockups).
 
-```bash
-python -m http.server 8088                # serve the game root, open http://127.0.0.1:8088
-ffmpeg -framerate 20 -i frames/menu_%04d.png -loop 0 assets/menu.gif
-```
+## 📜 License
 
----
-
-## ❓ Frequently Asked Questions
-
-<details>
-<summary><b>Is this a horror game?</b></summary>
-<br />
-No. It is a comedy. Whether you laugh is between you and your conscience.
-</details>
-
-<details>
-<summary><b>How long is it?</b></summary>
-<br />
-About forty-five seconds, if you have the patience of a saint. There are no achievements. There is only truth.
-</details>
-
-<details>
-<summary><b>Can I skip the loading screen?</b></summary>
-<br />
-The loading screen cannot be skipped. The loading screen skips <i>you</i>.
-</details>
-
-<details>
-<summary><b>Why does it only have volume settings?</b></summary>
-<br />
-Because the hand has already decided everything else.
-</details>
-
-<details>
-<summary><b>Is my data safe?</b></summary>
-<br />
-The game collects absolutely nothing. Your volume preference lives in a few bytes of local storage and never leaves your PC.
-</details>
-
----
-
-## 🧾 Legal-ish
-
-It's a harmless prank game. Nothing is installed outside the folder you pick, nothing is sent anywhere, and the uninstaller is a perfectly normal uninstaller.
-
-MIT licensed. Made by **Sajid Hossain**, with pixels, sass, and an unhealthy amount of `fillRect`.
-
-<div align="center">
-
-**[⬇️ Download for Windows](../../releases)**
-
-*You have been chosen.*
-
-</div>
+MIT licensed. Made by Sajid Hossain, an indie game with pixels, sass, and an unhealthy amount of `fillRect`.
