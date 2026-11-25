@@ -70,6 +70,24 @@
       this.master = this.ac.createGain();
       this.master.gain.value = this.gain();
       this.master.connect(this.ac.destination);
+
+      /* a cheap "cathedral" so the big moments feel big:
+         master sends into a soft feedback delay that leaks back to the speakers */
+      try {
+        this.delay = this.ac.createDelay(0.6);
+        this.delay.delayTime.value = 0.26;
+        this.dfb = this.ac.createGain();
+        this.dfb.gain.value = 0.30;
+        this.dwet = this.ac.createGain();
+        this.dwet.gain.value = 0.16;
+        this.master.connect(this.dwet);
+        this.dwet.connect(this.delay);
+        this.delay.connect(this.dfb);
+        this.dfb.connect(this.delay);
+        this.delay.connect(this.ac.destination);
+      } catch (err) {
+        this.delay = null; /* echo is a luxury, not a right */
+      }
       return true;
     },
 
@@ -185,6 +203,26 @@
     hum() {
       Sound.tone({ freq: 55, dur: 3.2, type: 'triangle', vol: 0.1 });
       Sound.tone({ freq: 82.5, dur: 3.2, type: 'sine', vol: 0.06 });
+    },
+    scratch() {
+      /* the divine needle jumps the groove */
+      Sound.noise({ dur: 0.09, vol: 0.22, from: 5000, to: 900, q: 2 });
+      Sound.noise({ dur: 0.11, vol: 0.2, from: 700, to: 4200, q: 2, at: 0.09 });
+      Sound.tone({ freq: 260, to: 900, dur: 0.07, type: 'square', vol: 0.07 });
+      Sound.tone({ freq: 900, to: 180, dur: 0.09, type: 'square', vol: 0.07, at: 0.09 });
+    },
+    thump() {
+      /* the loader's heartbeat. it knows what it is doing. */
+      Sound.tone({ freq: 58, to: 30, dur: 0.28, type: 'sine', vol: 0.22 });
+      Sound.noise({ dur: 0.07, vol: 0.07, from: 500, to: 120 });
+    },
+    twinkle() {
+      Sound.tone({ freq: 1568, dur: 0.22, type: 'sine', vol: 0.07 });
+      Sound.tone({ freq: 2093, dur: 0.18, type: 'sine', vol: 0.045, at: 0.07 });
+    },
+    deflate() {
+      /* all of that divinity, quietly leaving the room */
+      Sound.tone({ freq: 520, to: 110, dur: 0.7, type: 'sawtooth', vol: 0.07 });
     }
   };
 
@@ -192,13 +230,26 @@
     timer: null,
     step: 0,
     on: false,
+    /* grand, slightly too pleased with itself: A minor, but with confidence */
     pattern: [
-      440, 0, 523, 0, 659, 0, 523, 0,
-      392, 0, 494, 0, 587, 0, 494, 0,
-      349, 0, 440, 0, 523, 0, 440, 0,
-      392, 0, 466, 0, 587, 0, 466, 0
+      440, 0, 523, 659, 0, 523, 0, 659,
+      392, 0, 494, 587, 0, 494, 0, 587,
+      349, 0, 440, 523, 0, 440, 0, 523,
+      392, 0, 466, 587, 0, 466, 523, 0
+    ],
+    harmony: [
+      659, 0, 659, 0, 784, 0, 659, 0,
+      587, 0, 587, 0, 698, 0, 587, 0,
+      523, 0, 523, 0, 659, 0, 523, 0,
+      587, 0, 587, 0, 698, 0, 659, 0
     ],
     bass: [110, 98, 87, 98],
+    pads: [
+      [110, 165, 220],
+      [98, 147, 196],
+      [87, 131, 175],
+      [98, 147, 196]
+    ],
 
     start() {
       if (this.on) return;
@@ -217,11 +268,37 @@
     tick() {
       if (!this.on) return;
       const i = this.step % this.pattern.length;
+      const bar = Math.floor(i / 8);
+
+      /* melody + a harmony voice a third above, like cherubs on backup */
       const note = this.pattern[i];
-      if (note) Sound.tone({ freq: note, dur: 0.16, type: 'triangle', vol: 0.045 });
-      if (i % 4 === 0) {
-        Sound.tone({ freq: this.bass[(this.step / 4) % this.bass.length | 0], dur: 0.42, type: 'sine', vol: 0.075 });
+      if (note) Sound.tone({ freq: note, dur: 0.17, type: 'triangle', vol: 0.045 });
+      const harm = this.harmony[i];
+      if (harm) Sound.tone({ freq: harm, dur: 0.15, type: 'triangle', vol: 0.022 });
+
+      /* deep holy drums */
+      if (i % 8 === 0) {
+        Sound.tone({ freq: 82, to: 40, dur: 0.22, type: 'sine', vol: 0.1 });
+        Sound.noise({ dur: 0.05, vol: 0.03, from: 2400, to: 500 });
       }
+      if (i % 8 === 4) {
+        Sound.noise({ dur: 0.07, vol: 0.035, from: 5000, to: 900 });
+      }
+
+      /* bass */
+      if (i % 4 === 0) {
+        Sound.tone({ freq: this.bass[bar % this.bass.length], dur: 0.42, type: 'sine', vol: 0.075 });
+      }
+
+      /* a slow pad chord every two bars, floated through the cathedral bus */
+      if (i % 16 === 0) {
+        const pad = this.pads[bar % this.pads.length];
+        for (let v = 0; v < pad.length; v++) {
+          Sound.tone({ freq: pad[v], dur: 3.1, type: 'sawtooth', vol: 0.014, at: v * 0.05 });
+          Sound.tone({ freq: pad[v] * 2, dur: 3.1, type: 'sine', vol: 0.01, at: v * 0.05 });
+        }
+      }
+
       this.step++;
     }
   };
@@ -259,6 +336,19 @@
       s: Math.random() < 0.75 ? 2 : 3,
       p: Math.random() * Math.PI * 2,
       sp: 0.3 + Math.random() * 1.7
+    });
+  }
+
+  /* menu sparkles: little motes of divine Hauskeeping, drifting upward */
+  const menuMotes = [];
+  for (let i = 0; i < 26; i++) {
+    menuMotes.push({
+      x: Math.random() * W,
+      y: Math.random() * H,
+      s: Math.random() < 0.7 ? 2 : 3,
+      sp: rand(6, 20),
+      drift: rand(-4, 4),
+      p: Math.random() * Math.PI * 2
     });
   }
 
@@ -709,12 +799,15 @@
     } else if (next === 'loading') {
       Music.stop();
       loadTickAt = -1;
+      heartAt = 0.6; /* the first heartbeat comes early. like fate. */
       SFX.hum();
       Sound.tone({ freq: 60, to: 150, dur: 20, type: 'sawtooth', vol: 0.035 });
     } else if (next === 'ritual') {
       Music.stop();
       cueIndex = 0;
       resetMotes();
+      flipSparks.length = 0;
+      sparkFired = false;
       shake = 0;
       flash = 0;
       fingerGrow = 0;
@@ -768,7 +861,11 @@
     'Compressing the universe (99% done).',
     'Bribing the physics engine.',
     'Reheating yesterday\u2019s miracle.',
-    'Counting to 20 dramatically.'
+    'Counting to 20 dramatically.',
+    'Sharpening the disappointment.',
+    'Certifying this experience as holy (pending).',
+    'Waiting for the hand to finish its sentence.',
+    'Loading the loading screen\u2019s backstory.'
   ];
 
   const LOAD_SECONDS = 20;
@@ -776,6 +873,7 @@
   const GAMEOVER_END = 11.6;
 
   let loadTickAt = -1;
+  let heartAt = 0;
 
   function drawTitle(y) {
     const text = 'HAND OF GOD';
@@ -813,25 +911,35 @@
     ctx.restore();
   }
 
-  function drawButton(rect, labelText, active) {
+  function drawButton(rect, labelText, active, pressing) {
+    const sink = pressing ? 3 : 0;
+    const sel = active ? 0.55 + 0.2 * Math.sin(globalTime * 5) : 0;
+
     ctx.fillStyle = 'rgba(8,4,16,0.85)';
-    ctx.fillRect(rect.x + 5, rect.y + 5, rect.w, rect.h);
+    ctx.fillRect(rect.x + 5, rect.y + 5 + sink, rect.w, rect.h);
     ctx.fillStyle = active ? 'rgba(255,210,87,0.16)' : 'rgba(30,18,52,0.92)';
-    ctx.fillRect(rect.x, rect.y, rect.w, rect.h);
+    ctx.fillRect(rect.x, rect.y + sink, rect.w, rect.h);
+
+    ctx.save();
+    if (sel > 0) {
+      ctx.shadowColor = '#ffd257';
+      ctx.shadowBlur = sel * 26;
+    }
     ctx.lineWidth = 3;
     ctx.strokeStyle = active ? '#ffd257' : '#63449c';
-    ctx.strokeRect(rect.x + 1.5, rect.y + 1.5, rect.w - 3, rect.h - 3);
+    ctx.strokeRect(rect.x + 1.5, rect.y + 1.5 + sink, rect.w - 3, rect.h - 3);
+    ctx.restore();
 
     if (active) {
       for (let i = 0; i < 4; i++) {
         const hh = (8 - i * 2) * 2;
-        const yy = rect.y + rect.h / 2 - (8 - i * 2);
+        const yy = rect.y + rect.h / 2 - (8 - i * 2) + sink;
         px(rect.x + 16 + i * 3, yy, 3, hh, '#ffd257');
         px(rect.x + rect.w - 19 - i * 3, yy, 3, hh, '#ffd257');
       }
     }
 
-    label(labelText, rect.x + rect.w / 2, rect.y + rect.h / 2 + 1, {
+    label(labelText, rect.x + rect.w / 2, rect.y + rect.h / 2 + 1 + sink, {
       size: 15,
       color: active ? '#fff4c8' : '#c9b9f2',
       glow: active ? 14 : 0,
@@ -894,14 +1002,50 @@
   function drawMenu() {
     drawBackdrop(1);
 
-    /* a shy, giant hand lurking behind the title */
+    /* the hand waits behind the title. For now, it keeps its opinion to itself. */
+    const breathe = Math.sin(globalTime * 0.55) * 6;
+    const lurk = 5.6 + Math.sin(globalTime * 0.55) * 0.25;
     ctx.save();
-    ctx.globalAlpha = 0.09;
-    drawHand(W / 2, H + 80, 5.4, {
-      extended: true,
+    ctx.globalAlpha = 0.13 + 0.04 * Math.sin(globalTime * 0.8);
+
+    /* faint aura behind the fist */
+    const gAura = ctx.createRadialGradient(W / 2, H + 26, 40, W / 2, H + 26, 300);
+    gAura.addColorStop(0, 'rgba(140,80,220,' + (0.20 + 0.08 * Math.sin(globalTime * 1.3)) +')');
+    gAura.addColorStop(1, 'rgba(140,80,220,0)');
+    ctx.fillStyle = gAura;
+    ctx.fillRect(0, 0, W, H);
+
+    drawHand(W / 2, H + 96 + breathe, lurk, {
+      extended: false,
       palette: 'ghost',
-      rotation: Math.sin(globalTime * 0.35) * 0.05
+      rotation: Math.sin(globalTime * 0.35) * 0.05 + Math.sin(globalTime * 0.13) * 0.02
     });
+    ctx.restore();
+
+    /* a ring of slow runes circles above the fist, keeping the secret */
+    ctx.save();
+    ctx.globalAlpha = 0.14 + 0.08 * Math.sin(globalTime * 0.9);
+    for (let i = 0; i < 14; i++) {
+      const a = globalTime * 0.22 + (i * Math.PI * 2) / 14;
+      const r = 150 + Math.sin(globalTime * 0.7 + i) * 10;
+      px(W / 2 + Math.cos(a) * r, 430 + Math.sin(a) * r * 0.28, i % 4 === 0 ? 4 : 2, i % 4 === 0 ? 4 : 2, i % 4 === 0 ? '#ff9ede' : '#b48bff');
+    }
+    ctx.restore();
+
+    /* drifting holy sparkles */
+    ctx.save();
+    for (let i = 0; i < menuMotes.length; i++) {
+      const m = menuMotes[i];
+      m.y -= m.sp * 0.016;
+      m.x += Math.sin(globalTime * 0.8 + m.p) * 0.25 + m.drift * 0.004;
+      if (m.y < -6) {
+        m.y = H + 6;
+        m.x = Math.random() * W;
+      }
+      const tw = 0.35 + 0.65 * Math.abs(Math.sin(globalTime * 1.4 + m.p));
+      ctx.globalAlpha = tw;
+      px(m.x, m.y, m.s, m.s, m.s > 2 ? '#ffd257' : '#ff9ede');
+    }
     ctx.restore();
 
     drawTitle(158);
@@ -911,12 +1055,12 @@
     input.hover = null;
     for (let i = 0; i < rects.length; i++) {
       const active = i === menuIndex;
-      drawButton(rects[i], rects[i].label, active);
+      drawButton(rects[i], rects[i].label, active, active && input.down && hit(rects[i]));
       if (active) input.hover = rects[i].id;
     }
 
     label('MOUSE OR ARROW KEYS + ENTER', W / 2, H - 34, { size: 9, color: '#7d6fb0' });
-    label('v1.0.0', W - 20, 20, { size: 8, color: '#544a7a', align: 'right' });
+    label('v1.1.0 - now with 30% more anticipation', W - 20, 20, { size: 8, color: '#544a7a', align: 'right' });
   }
 
   /* ------------------------------------------------------------------ */
@@ -928,6 +1072,12 @@
     ctx.fillRect(0, 0, W, H);
 
     const p = clamp(stateTime / LOAD_SECONDS, 0, 1);
+
+    /* something is being assembled in there. the shape stays deliberately unclear. */
+    ctx.save();
+    ctx.globalAlpha = 0.05 + 0.06 * p;
+    drawHand(W / 2, 372 + (1 - p) * 60, 3.0 + 1.8 * p, { extended: false, palette: 'ghost' });
+    ctx.restore();
 
     /* rotating summoning rings */
     const cx = W / 2;
@@ -1007,8 +1157,11 @@
     { at: 6.0, fn: () => SFX.charge() },
     { at: 7.9, fn: () => SFX.danger() },
     { at: 9.25, fn: () => SFX.boom() },
-    { at: 9.62, fn: () => SFX.womp() },
+    { at: 9.58, fn: () => SFX.scratch() }, /* the almighty needle jumps the groove */
+    { at: 9.62, fn: () => SFX.deflate() }, /* divinity, politely excused */
+    { at: 9.70, fn: () => SFX.womp() },   /* ...and there it is */
     { at: 10.4, fn: () => SFX.tick() },
+    { at: 10.9, fn: () => SFX.twinkle() },
     { at: 12.3, fn: () => SFX.chime() }
   ];
 
@@ -1023,6 +1176,10 @@
   let fingerGrow = 0;
 
   const motes = [];
+
+  /* sparks thrown off when the divinity gives up */
+  const flipSparks = [];
+  let sparkFired = false;
 
   function newMote(seeded) {
     return {
@@ -1069,6 +1226,33 @@
       if (m.r < 26) {
         Object.assign(m, newMote(false));
       }
+    }
+
+    /* at the moment of truth: the glow pops like a cheap firework */
+    if (stateTime >= T_FLIP && !sparkFired) {
+      sparkFired = true;
+      for (let i = 0; i < 46; i++) {
+        const a = Math.random() * Math.PI * 2;
+        const sp = rand(60, 340);
+        flipSparks.push({
+          x: cx + Math.cos(a) * rand(10, 60),
+          y: cy + 40 + Math.sin(a) * rand(10, 60),
+          vx: Math.cos(a) * sp,
+          vy: Math.sin(a) * sp - 90,
+          life: rand(0.5, 1.1),
+          age: 0,
+          s: Math.random() < 0.6 ? 3 : 4,
+          c: Math.random() < 0.4 ? '#ffd257' : Math.random() < 0.5 ? '#ff7ac2' : '#b48bff'
+        });
+      }
+    }
+    for (let i = flipSparks.length - 1; i >= 0; i--) {
+      const s = flipSparks[i];
+      s.age += dt;
+      s.x += s.vx * dt;
+      s.y += s.vy * dt;
+      s.vy += 340 * dt; /* gravity. even miracles must obey. */
+      if (s.age >= s.life) flipSparks.splice(i, 1);
     }
 
     if (stateTime >= RITUAL_END) transitionTo('gameover');
@@ -1131,6 +1315,42 @@
     }
     ctx.restore();
 
+    /* tension lightning: the heavens crackle as the moment approaches */
+    if (stateTime > 7.2 && stateTime < T_PEAK) {
+      const inten = clamp((stateTime - 7.2) / (T_PEAK - 7.2), 0, 1);
+      if (Math.random() < 0.05 + inten * 0.22) {
+        const bolts = 1 + (Math.random() < inten * 0.5 ? 1 : 0);
+        for (let b = 0; b < bolts; b++) {
+          let bx = cx + rand(-220, 220);
+          let by = rand(-20, 120);
+          ctx.save();
+          ctx.globalAlpha = rand(0.25, 0.6);
+          ctx.strokeStyle = Math.random() < 0.5 ? '#ffe08a' : '#c58bff';
+          ctx.lineWidth = Math.random() < 0.3 ? 2 : 1;
+          ctx.beginPath();
+          ctx.moveTo(bx, by);
+          const steps = 4 + Math.floor(Math.random() * 4);
+          for (let seg = 0; seg < steps; seg++) {
+            bx += rand(-40, 40) * (cx > bx ? 1 : -1) * 0.6 + (cx - bx) * 0.12;
+            by += rand(14, 44);
+            ctx.lineTo(bx, by);
+          }
+          ctx.stroke();
+          ctx.restore();
+        }
+      }
+    }
+
+    /* sparks from the moment of truth */
+    for (let i = 0; i < flipSparks.length; i++) {
+      const s = flipSparks[i];
+      const fade = clamp(1 - s.age / s.life, 0, 1);
+      ctx.globalAlpha = fade;
+      px(s.x, s.y, s.s, s.s, s.c);
+      if (s.s > 3 && fade > 0.5) px(s.x, s.y - 1, s.s - 2, 1, '#fff6cf');
+    }
+    ctx.globalAlpha = 1;
+
     /* the hand itself */
     const riseRaw = clamp((stateTime - T_RISE_START) / (T_RISE_END - T_RISE_START), 0, 1);
     const rise = easeOut(riseRaw);
@@ -1140,7 +1360,12 @@
     const startY = H + handH; /* fully off-screen when the rise begins */
     const handY = startY + (restingY - startY) * rise;
     const handCenterY = handY - handH / 2;
-    const rotation = lerp(-0.55, 0, rise) + Math.sin(globalTime * 1.6) * 0.03 * (1 - build);
+    let rotation = lerp(-0.55, 0, rise) + Math.sin(globalTime * 1.6) * 0.03 * (1 - build);
+    /* after the reveal: two slow, deeply insincere waggles */
+    if (stateTime > T_FLIP) {
+      const since = stateTime - T_FLIP;
+      rotation += Math.sin(since * 7) * 0.075 * Math.exp(-since * 1.5);
+    }
 
     const shx = Math.sin(globalTime * 61) * shake;
     const shy = Math.cos(globalTime * 47) * shake * 0.7;
@@ -1169,6 +1394,20 @@
         ctx.beginPath();
         ctx.ellipse(cx + shx, handY + shy - 26, hr, hr * 0.35, 0, 0, Math.PI * 2);
         ctx.stroke();
+        ctx.restore();
+      }
+
+      /* the fingertip catches the light for one last, deeply smug moment */
+      if (stateTime > 10.55 && stateTime < 11.35) {
+        const tx = cx + shx + (-HAND_BOUNDS.cx + 25.5) * handScale;
+        const ty = handY + shy + (-SPR_H + 7) * handScale;
+        const tw = clamp(Math.sin(((stateTime - 10.55) / 0.8) * Math.PI), 0, 1);
+        ctx.save();
+        ctx.globalAlpha = tw;
+        const rr = 3 + 4 * tw;
+        px(tx - rr, ty, rr * 2, 1, '#fff6cf');
+        px(tx, ty - rr, 1, rr * 2, '#fff6cf');
+        px(tx - 1, ty - 1, 3, 3, '#ffffff');
         ctx.restore();
       }
     }
@@ -1245,6 +1484,11 @@
       gameOverCue++;
       SFX.bell();
     }
+    /* the merciful option: the hand permits you to leave early */
+    if (stateTime > 8.6 && (pressedFirst(['Enter', 'Escape', ' ']) || input.clicked)) {
+      SFX.back();
+      transitionTo('menu');
+    }
     if (stateTime >= GAMEOVER_END) transitionTo('menu');
   }
 
@@ -1292,6 +1536,12 @@
       alpha: clamp((stateTime - 6.1) / 1.1, 0, 1),
       glow: 8,
       glowColor: '#7b4dff'
+    });
+
+    label('no achievements were earned in the making of this ending.', W / 2, 322, {
+      size: 8,
+      color: '#8d7fbd',
+      alpha: clamp((stateTime - 7.0) / 1.0, 0, 1)
     });
 
     const backA = clamp((stateTime - 7.8) / 1.0, 0, 1);
@@ -1453,6 +1703,16 @@
         loadTickAt = sec;
         if (sec > 0) SFX.tick();
       }
+
+      /* the loader's heartbeat speeds up as the moment approaches.
+         it is not nervous. it is simply thorough. */
+      const p = clamp(stateTime / LOAD_SECONDS, 0, 1);
+      const heartGap = lerp(2.4, 0.62, p * p);
+      if (stateTime >= heartAt) {
+        SFX.thump();
+        heartAt = stateTime + heartGap;
+      }
+
       if (stateTime >= LOAD_SECONDS) transitionTo('ritual');
     } else if (state === 'ritual') {
       updateRitual(dt, anim);
