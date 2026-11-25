@@ -102,6 +102,21 @@ installer is all it takes to update the button.
 
 ---
 
+## 🎞️ Moving visuals
+
+- [`assets/menu.gif`](assets/menu.gif) — the start menu looping: breathing fist, drifting sparkles, orbiting runes, press-in buttons.
+- [`assets/loader.gif`](assets/loader.gif) — the loading screen: accelerating heartbeat, bar fill, the silhouette that stays deliberately unclear.
+
+Both were captured from real gameplay (no mockups). Regenerate them yourself:
+
+```bash
+cd site && python -m http.server 8088
+```
+
+then record the canvas with the browser console tool.
+
+---
+
 ## ❓ Frequently Asked Questions
 
 <details>
